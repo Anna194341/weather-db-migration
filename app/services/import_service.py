@@ -2,7 +2,8 @@ import csv
 from datetime import datetime
 
 from app.database.db import SessionLocal
-from app.models.weather import Weather, WindDirection
+from app.models.weather import Weather
+from app.models.wind import Wind, WindDirection
 from app.repositories.repository import Repository
 
 
@@ -20,20 +21,27 @@ class ImportService:
             reader = csv.DictReader(f)
 
             for row in reader:
+
+                wind = Wind(
+                    wind_mph=float(row["wind_mph"]),
+                    wind_kph=float(row["wind_kph"]),
+                    wind_degree=int(row["wind_degree"]),
+                    wind_direction=WindDirection(row["wind_direction"]),
+                    gust_mph=float(row["gust_mph"]),
+                    gust_kph=float(row["gust_kph"]),
+                    is_good_to_go_out=float(row["wind_kph"]) <= 36
+                )
+
+                db.add(wind)
+                db.flush()  # отримуємо wind.id
+
                 item = Weather(
                     country=row["country"],
                     location_name=row["location_name"],
                     last_updated=datetime.strptime(row["last_updated"], "%Y-%m-%d %H:%M"),
                     temperature_celsius=float(row["temperature_celsius"]),
                     sunrise=datetime.strptime(row["sunrise"], "%I:%M %p").time(),
-
-                    wind_mph=float(row["wind_mph"]),
-                    wind_kph=float(row["wind_kph"]),
-                    wind_degree=int(row["wind_degree"]),
-                    wind_direction=WindDirection(row["wind_direction"]),
-
-                    gust_mph=float(row["gust_mph"]),
-                    gust_kph=float(row["gust_kph"]),
+                    wind_id=wind.id
                 )
 
                 items.append(item)
@@ -44,4 +52,3 @@ class ImportService:
 
 if __name__ == "__main__":
     ImportService("data/GlobalWeatherRepository.csv").run()
-    
