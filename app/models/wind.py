@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import Column, Float, Integer, Enum
+from sqlalchemy import Column, Float, Integer, Enum, Boolean
 from app.database.db import Base
 
 
@@ -35,3 +35,5 @@ class Wind(Base):
 
     gust_mph = Column(Float)
     gust_kph = Column(Float)
+
+    is_good_to_go_out = Column(Boolean)
