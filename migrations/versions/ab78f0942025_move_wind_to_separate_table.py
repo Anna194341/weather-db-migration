@@ -9,7 +9,6 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision: str = 'ab78f0942025'
@@ -29,7 +28,7 @@ def upgrade() -> None:
         sa.Column('wind_degree', sa.Integer(), nullable=True),
         sa.Column(
             'wind_direction',
-            postgresql.ENUM(
+            sa.Enum(
                 'N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
                 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW',
                 name='winddirection',
@@ -68,9 +67,8 @@ def upgrade() -> None:
 
     op.execute("""
         UPDATE weather
-        SET wind_id = wind.id
-        FROM wind
-        WHERE wind.id = weather.id
+        JOIN wind ON wind.id = weather.id
+        SET weather.wind_id = wind.id
     """)
 
     op.create_foreign_key(

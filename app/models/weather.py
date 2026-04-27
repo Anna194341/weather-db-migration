@@ -8,8 +8,8 @@ class Weather(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    country = Column(String, nullable=False)
-    location_name = Column(String, nullable=False)
+    country = Column(String(255), nullable=False)
+    location_name = Column(String(255), nullable=False)
 
     last_updated = Column(DateTime, nullable=False)
     temperature_celsius = Column(Float)
