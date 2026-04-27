@@ -1,4 +1,5 @@
 from sqlalchemy import Column, DateTime, Float, Integer, String, Time, ForeignKey
+from sqlalchemy.orm import relationship
 from app.database.db import Base
 
 
@@ -16,3 +17,5 @@ class Weather(Base):
     sunrise = Column(Time)
 
     wind_id = Column(Integer, ForeignKey("wind.id"))
+
+    wind = relationship("Wind", back_populates="weather")
